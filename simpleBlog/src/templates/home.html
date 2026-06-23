@@ -32,7 +32,9 @@ content%}
     <div class="card-body">
         <h5 class="card-title">{{post.post_content}}</h5>
         <p class="card-text small">Author: {{post.username}}</p>
-        <a href="#" class="link small">Author</a>
+        <a href="/authorposts/{{post.user_id}}" class="link small"
+            >show all author posts</a
+        >
     </div>
 </div>
 {%endfor%} {% endblock %}

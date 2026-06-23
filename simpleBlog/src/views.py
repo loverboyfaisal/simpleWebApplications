@@ -1,7 +1,7 @@
 # Import bluebrint
 from flask import Blueprint,render_template,request,jsonify,redirect,url_for,flash
 from flask_login import login_required,current_user
-from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid
+from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts
 # Create bluebrint instance
 views = Blueprint("views",__name__)
 
@@ -46,4 +46,13 @@ def deletepost(id):
             return redirect(url_for('views.home'))
     
     flash('Post not found', 'warning')  # Yellow alert
+    return redirect(url_for('views.home'))
+
+
+@views.route('/authorposts/<id>')
+def authorposts(id):
+    posts = fetch_author_posts(id)
+    if posts:
+        return render_template('posts.html',posts=posts)
+    flash("Author not exist","warning")
     return redirect(url_for('views.home'))

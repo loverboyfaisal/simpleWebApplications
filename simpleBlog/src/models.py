@@ -51,6 +51,24 @@ class User(UserMixin):
         return None
     
 
+def fetch_author_posts(user_id):
+    db = mysql_connection()
+    curr = db.cursor(dictionary=True)
+
+    query = """
+    select post_id,user_id,post_content from posts where user_id = %s
+"""
+    curr.execute(query,(user_id,))
+    rows = curr.fetchall()
+    
+    curr.close()
+    db.close()
+
+    return rows
+
+
+    
+
 def fetch_post():
     db = mysql_connection()
     curr = db.cursor(dictionary=True)
