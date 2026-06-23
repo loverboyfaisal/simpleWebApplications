@@ -29,9 +29,8 @@ def create_post():
     if request.method == "POST":
         post_content = request.values.get("user_input_post_content")
         create_new_post(current_user.id,post_content)
-    return render_template('createpost.html')
-
-from flask import flash, redirect, url_for
+        flash("post have been created","success")
+    return redirect(url_for('views.home'))
 
 @views.route('/deletepost/<id>')
 @login_required
