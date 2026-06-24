@@ -1,7 +1,7 @@
 # Import bluebrint
 from flask import Blueprint,render_template,request,jsonify,redirect,url_for,flash
 from flask_login import login_required,current_user
-from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts,view_comment_byid
+from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts,view_comment_byid,create_comment
 # Create bluebrint instance
 views = Blueprint("views",__name__)
 
@@ -67,3 +67,17 @@ def view_comments(post_id):
     post = get_post_byid(post_id)
     comment = view_comment_byid(post_id)
     return render_template('postcomment.html',comments=comment,post=post)
+
+
+@views.route('/createcomment/<id>',methods=["POST"])
+def create_new_comment(id):
+    if request.method == "POST":
+        user_name = current_user.id
+        post_id = id
+        comment_content = request.values.get("user_input_comment_content")
+        create_comment(post_id,comment_content,user_name)
+        flash("Comment have been posted","success")
+        return redirect(url_for(f"views.view_comments",post_id=post_id))
+    else:
+        flash("Error","danger")
+        return redirect(url_for("views.view_comments"))

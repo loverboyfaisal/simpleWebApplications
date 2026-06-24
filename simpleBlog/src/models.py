@@ -161,10 +161,13 @@ def view_comment_byid(post_id):
     curr = db.cursor(dictionary=True)
 
     query = """
-    select * from comments where post_id = %s;
-"""
+    select com_id,com_content,post_id,com_date,user_name from comments 
+    inner JOIN users 
+    ON comments.user_id = users.id
+    where comments.post_id = %s;
+    """
     curr.execute(query,(post_id,))
-    row = curr.fetchone()
+    row = curr.fetchall()
 
 
     curr.close()
@@ -173,13 +176,15 @@ def view_comment_byid(post_id):
     return row
 
 
-def create_comment(post_id,user_id,commaent_content):
+def create_comment(post_id,commaent_content,user_id):
     db = mysql_connection()
     curr = db.cursor()
     
     query = """
-    insert into comments (post_id,comment_content,user_id) values (%s,%s,%s);
+    insert into comments (post_id,com_content,user_id) values (%s,%s,%s);
     """
+    curr.execute(query,(post_id,commaent_content,user_id))
+    db.commit()
     curr.close()
     db.close()
 
