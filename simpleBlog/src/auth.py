@@ -1,5 +1,5 @@
 # Import bluebrint
-from flask import Blueprint,render_template,request,redirect,url_for
+from flask import Blueprint,render_template,request,redirect,url_for,flash
 from src.models import User,create_user
 from werkzeug.security import check_password_hash,generate_password_hash
 from flask_login import login_user,logout_user,current_user
@@ -21,11 +21,11 @@ def login():
                 login_user(user_exist,remember=True)
                 return redirect(url_for("views.home"))
             else:
-                return render_template('login.html',msg="Incorrect password")
+                return render_template('login.html')
         else:
-            return render_template('login.html',msg="user is not exist")
+            return render_template('login.html')
 
-    return render_template('login.html',msg="user is not exist",)
+    return render_template('login.html')
 
 
 @auth.route('/sign_up',methods=["GET", "POST"])
@@ -44,8 +44,8 @@ def sign_up():
             return render_template("signup.html",error="user is already signed up")
         password_hash = generate_password_hash(usr_input_password)
         create_user(usr_input_username,usr_input_email,password_hash)
-
-    return render_template('signup.html',error="User has been created")
+    flash("user has been created","success")
+    return render_template('signup.html')
 
 
 @auth.route('/logout')

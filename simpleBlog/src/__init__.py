@@ -24,9 +24,12 @@ def create_app():
     from src.auth import auth
     app.register_blueprint(auth, url_prefix='/')
 
-    from src.models import create_blog_db,User
+    from src.models import create_blog_db,User,create_comments_table,create_posts_table
     create_blog_db()
+    create_posts_table()
+    create_comments_table()
     
+
     login_manger = LoginManager()
     # if user is not authenticated redirect them to blueprint auth => login 
     login_manger.login_view = "auth.login"

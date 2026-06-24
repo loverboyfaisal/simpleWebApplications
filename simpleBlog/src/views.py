@@ -1,7 +1,7 @@
 # Import bluebrint
 from flask import Blueprint,render_template,request,jsonify,redirect,url_for,flash
 from flask_login import login_required,current_user
-from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts
+from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts,view_comment_byid
 # Create bluebrint instance
 views = Blueprint("views",__name__)
 
@@ -28,9 +28,14 @@ def create_post():
         return render_template('createpost.html')
     if request.method == "POST":
         post_content = request.values.get("user_input_post_content")
+        if post_content == "":
+            flash("Can't create empty post","warning")
+            return redirect(url_for('views.home'))
         create_new_post(current_user.id,post_content)
         flash("post have been created","success")
     return redirect(url_for('views.home'))
+
+
 
 @views.route('/deletepost/<id>')
 @login_required
@@ -56,3 +61,9 @@ def authorposts(id):
         return render_template('posts.html',posts=posts)
     flash("Author not exist","warning")
     return redirect(url_for('views.home'))
+
+@views.route('/postcomments/<post_id>')
+def view_comments(post_id):
+    post = get_post_byid(post_id)
+    comment = view_comment_byid(post_id)
+    return render_template('postcomment.html',comments=comment,post=post)

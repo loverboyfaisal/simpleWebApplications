@@ -156,6 +156,76 @@ def create_users_table():
     curr.close()
     db.close()
 
+def view_comment_byid(post_id):
+    db = mysql_connection()
+    curr = db.cursor(dictionary=True)
+
+    query = """
+    select * from comments where post_id = %s;
+"""
+    curr.execute(query,(post_id,))
+    row = curr.fetchone()
+
+
+    curr.close()
+    db.close()
+
+    return row
+
+
+def create_comment(post_id,user_id,commaent_content):
+    db = mysql_connection()
+    curr = db.cursor()
+    
+    query = """
+    insert into comments (post_id,comment_content,user_id) values (%s,%s,%s);
+    """
+    curr.close()
+    db.close()
+
+
+def create_comments_table():
+    db = mysql_connection()
+    curr = db.cursor()
+    
+    query = """
+    create table if not exists comments (
+    com_id int primary key auto_increment unique,
+    user_id int,
+    post_id int,
+    com_content varchar(255),
+    com_date datetime default current_timestamp,
+    constraint fk_comment_user_id
+    foreign key (user_id)
+    references users(id),
+    constraint fk_comments_post_id
+    foreign key (post_id)
+    references posts(post_id));
+"""
+    curr.execute(query)
+
+    curr.close()
+    db.close()
+
+def create_posts_table():
+    db = mysql_connection()
+    curr = db.cursor()
+
+    query = """
+    create table if not exists posts (
+    post_id int primary key auto_increment unique,
+    user_id int,
+    post_content varchar(255),
+    date_publish datetime default current_timestamp,
+    constraint fk_posts_user_id
+    foreign key (user_id)
+    references users(id)
+    )
+"""
+
+    curr.close()
+    db.close()
+
 
 def create_user(user_name,user_email,password):
     db = mysql_connection()
