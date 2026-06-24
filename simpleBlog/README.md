@@ -13,10 +13,10 @@ Full fetature blog with create,delete posts and comments.
 - Authentication: Flask-Login
 
 ## Screenshots/Demo
-![image](../../assets/blog_1_clean.png)
-![image](../../assets/blog_2_clean.png)
-![image](../../assets/blog_3_clean.png)
-![image](../../assets/blog_4_clean.png)
+![image](../assets/blog_1_clean.png)
+![image](../assets/blog_2_clean.png)
+![image](../assets/blog_3_clean.png)
+![image](../assets/blog_4_clean.png)
 
 ## Learnings
 - Learned much about full stack development.
