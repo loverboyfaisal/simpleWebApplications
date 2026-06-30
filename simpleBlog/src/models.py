@@ -188,6 +188,35 @@ def create_comment(post_id,commaent_content,user_id):
     curr.close()
     db.close()
 
+def delete_comment(comment_id):
+    db = mysql_connection()
+    curr = db.cursor()
+    
+    query = """
+    delete from comments where com_id = %s;
+"""
+    curr.execute(query,(comment_id,))
+    db.commit()
+    
+    curr.close()
+    db.close()
+
+def get_comment_byid(id):
+    db = mysql_connection()
+    curr = db.cursor(dictionary=True,buffered=True)
+    
+    query = """
+    select * from comments where com_id = %s;
+    """
+    curr.execute(query,(id,))
+    data = curr.fetchone()
+    
+    curr.close()
+    db.close()
+
+    return data
+    
+
 
 def create_comments_table():
     db = mysql_connection()
@@ -201,11 +230,13 @@ def create_comments_table():
     com_content varchar(255),
     com_date datetime default current_timestamp,
     constraint fk_comment_user_id
-    foreign key (user_id)
-    references users(id),
+    foreign key(user_id)
+    references users(id)
+    on delete cascade,
     constraint fk_comments_post_id
-    foreign key (post_id)
-    references posts(post_id));
+    foreign key(post_id) references posts(post_id)
+	on delete cascade
+    );
 """
     curr.execute(query)
 
@@ -241,9 +272,3 @@ def create_user(user_name,user_email,password):
     db.commit()
     curr.close()
     db.close()
-
-
-
-
-
-

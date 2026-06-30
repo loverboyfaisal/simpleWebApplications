@@ -1,4 +1,4 @@
-{% extends "base.html" %} {% block title %} home {% endblock %} {% block
+{% extends "base.html" %} {% block title %} deletpost {% endblock %} {% block
 content%}
 <div class="container mb-3">
     <div class="card mt-3">
@@ -28,10 +28,42 @@ content%}
         <button type="submit" class="btn btn-outline-primary mb-3">post</button>
     </div>
 </form>
+
 <div class="text-bg-primary"></div>
 {%for comment in comments%}
-<div class="container">
-    <div class="card mt-3">
+<div class="card mt-3">
+    <div
+        class="card-header bg-dark bg-opacity-25 d-flex justify-content-lg-end"
+    >
+        {% if current_user.user_name == comment.user_name%}
+        <div class="btn-group btn-sm ms-auto">
+            <button
+                type="button"
+                class="btn dropdown-toggle"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+            >
+                ⋮
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <button
+                        class="dropdown-item"
+                        id="delete_post"
+                        type="button"
+                    >
+                        <a
+                            href="/deletecomment/{{comment.com_id}}"
+                            class="list-group-item text-danger"
+                            >Delete comment</a
+                        >
+                    </button>
+                </li>
+            </ul>
+        </div>
+        {%endif%}
+    </div>
+    <div class="card border-0">
         <div class="card-body">
             <h5 class="card-title">{{comment.com_content}}</h5>
             <p class="card-text small text-black text-opacity-50">

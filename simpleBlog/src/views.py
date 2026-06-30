@@ -1,7 +1,7 @@
 # Import bluebrint
 from flask import Blueprint,render_template,request,jsonify,redirect,url_for,flash
 from flask_login import login_required,current_user
-from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts,view_comment_byid,create_comment
+from src.models import create_new_post,fetch_post,delete_post_byid,get_post_byid,fetch_author_posts,view_comment_byid,create_comment,delete_comment,get_comment_byid
 # Create bluebrint instance
 views = Blueprint("views",__name__)
 
@@ -66,7 +66,7 @@ def authorposts(id):
 def view_comments(post_id):
     post = get_post_byid(post_id)
     comment = view_comment_byid(post_id)
-    return render_template('postcomment.html',comments=comment,post=post)
+    return render_template('postcomment.html',comments=comment,post=post,current_user=current_user)
 
 
 @views.route('/createcomment/<id>',methods=["POST"])
@@ -81,3 +81,22 @@ def create_new_comment(id):
     else:
         flash("Error","danger")
         return redirect(url_for("views.view_comments"))
+    
+
+@views.route('/deletecomment/<comment_id>',methods=["GET"])
+def deletecomment(comment_id):
+    if request.method == "GET":
+        com_exist = get_comment_byid(comment_id)
+
+        if com_exist:
+            # try:
+                post_id = com_exist.get("post_id")
+                delete_comment(com_exist.get("com_id"))
+                flash("Comment have been deleted","success")
+                return redirect(url_for("views.view_comments",post_id=post_id))
+            # except:
+            #     flash("Error...","warning")
+            #     return redirect(url_for("views.view_comments",post_id=post_id))
+        else:
+            flash("Comment is not exists")
+            return redirect(url_for("views.view_comments",post_id=post_id))
