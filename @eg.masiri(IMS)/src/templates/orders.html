@@ -1,0 +1,290 @@
+{% extends "base.html" %} {% block title %}Orders{% endblock %} {% block
+extra_head %}
+<style>
+    .orders-panel {
+        background: var(--ms-surface);
+        border: 1px solid var(--ms-hairline);
+        border-radius: 0.75rem;
+        padding: 1.75rem 1.5rem;
+        height: 100%;
+        transition: border-color 0.18s ease;
+    }
+
+    .orders-panel:focus-within {
+        border-color: color-mix(
+            in srgb,
+            var(--ms-brass) 45%,
+            var(--ms-hairline)
+        );
+    }
+
+    .orders-panel label {
+        display: block;
+        color: var(--ms-ink-dim);
+        font-weight: 500;
+        font-size: 0.925rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .orders-panel .form-control {
+        background-color: var(--ms-surface-2);
+        border-color: var(--ms-hairline);
+        color: var(--ms-ink);
+    }
+
+    .orders-panel .form-control::placeholder {
+        color: color-mix(in srgb, var(--ms-ink-dim) 70%, transparent);
+    }
+
+    .orders-panel .form-control:focus {
+        background-color: var(--ms-surface-2);
+        border-color: var(--ms-brass);
+        color: var(--ms-ink);
+        box-shadow: 0 0 0 0.2rem
+            color-mix(in srgb, var(--ms-brass) 18%, transparent);
+    }
+
+    .orders-panel .table {
+        --bs-table-bg: transparent;
+        --bs-table-color: var(--ms-ink);
+        --bs-table-border-color: var(--ms-hairline);
+    }
+
+    .orders-panel .table thead th {
+        color: var(--ms-ink-dim);
+        font-weight: 500;
+        border-bottom-color: var(--ms-hairline);
+    }
+
+    .orders-panel .table td {
+        border-bottom-color: var(--ms-hairline);
+    }
+
+    .orders-panel .table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    /* summary counters */
+    .ms-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        align-items: baseline;
+    }
+
+    .ms-summary-n {
+        font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+        font-weight: 600;
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--ms-brass);
+    }
+
+    .ms-summary-l {
+        display: block;
+        color: var(--ms-ink-dim);
+        font-size: 0.925rem;
+        font-weight: 500;
+    }
+
+    .ms-summary-item + .ms-summary-item {
+        padding-left: 1.25rem;
+        border-left: 1px solid var(--ms-hairline);
+    }
+
+    .ms-summary-ref .ms-summary-n,
+    .ms-summary-sold .ms-summary-n {
+        color: var(--ms-ink);
+    }
+
+    @media (max-width: 575.98px) {
+        .orders-panel {
+            padding: 1.25rem 1rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .orders-panel {
+            transition: none;
+        }
+    }
+</style>
+{% endblock %} {% block content %}
+
+<div class="mb-4">
+    <h1 class="mb-1">Orders</h1>
+    <p class="ms-lead mb-0">
+        Mark an item sold, refund one, or remove one by its product code.
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="orders-panel">
+            <h2 class="h5 mb-3">Item status</h2>
+            <form
+                method="post"
+                action="/api/orders/add_order"
+                class="row g-3 align-items-end"
+            >
+                <div class="col-sm">
+                    <label for="product_code_input">Product code</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="product_code_input"
+                        name="product_code"
+                        placeholder="input product code"
+                        autofocus
+                    />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-brass px-4">
+                        Order
+                    </button>
+                </div>
+            </form>
+            <form
+                method="post"
+                action="/api/orders/refund_order"
+                class="row g-3 align-items-end mt-1"
+            >
+                <div class="col-sm">
+                    <label for="refund_code_input">Product code</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="refund_code_input"
+                        name="product_code"
+                        placeholder="input product code"
+                    />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn ms-btn-quiet px-4">
+                        Refund
+                    </button>
+                </div>
+            </form>
+            <form
+                method="post"
+                action="/api/orders/sale"
+                class="row g-3 align-items-end mt-1"
+            >
+                <div class="col-sm">
+                    <label for="sale_code_input">Product code</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="sale_code_input"
+                        name="product_code"
+                        placeholder="input product code"
+                    />
+                </div>
+                <div class="col-sm">
+                    <label for="sale_price_input">Sale amount (optional)</label>
+                    <input
+                        type="number"
+                        step="0.01"
+                        class="form-control"
+                        id="sale_price_input"
+                        name="sale_amount"
+                        placeholder="Auto: item price"
+                    />
+                </div>
+                <div class="col-sm">
+                    <label for="sale_customer_input">Customer</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="sale_customer_input"
+                        name="customer_name"
+                        placeholder="Customer name"
+                    />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-brass px-4">
+                        Sale
+                    </button>
+                </div>
+            </form>
+            <form
+                method="post"
+                action="/api/orders/remove_item"
+                class="row g-3 align-items-end mt-1"
+            >
+                <div class="col-sm">
+                    <label for="remove_code_input">Product code</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        id="remove_code_input"
+                        name="product_code"
+                        placeholder="input product code"
+                    />
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn ms-btn-quiet px-4">
+                        Remove item
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <div class="orders-panel">
+            <h2 class="h5 mb-3">Available stock</h2>
+            {% if stock %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col">Product</th>
+                            <th scope="col" class="text-end">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for code, name, color, size, count in stock %}
+                        <tr>
+                            <td>{{ code }}</td>
+                            <td>{{ name }} {{ color }} {{ size }}</td>
+                            <td class="text-end">{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">No available items in the inventory.</p>
+            {% endif %}
+        </div>
+        <div class="orders-panel mt-4">
+            <h2 class="h5 mb-3">Refunded</h2>
+            {% if refunded %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col">Product</th>
+                            <th scope="col" class="text-end">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for code, name, color, size, count in refunded %}
+                        <tr>
+                            <td>{{ code }}</td>
+                            <td>{{ name }} {{ color }} {{ size }}</td>
+                            <td class="text-end">{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">Nothing refunded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

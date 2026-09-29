@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{% block title %}Masiri{% endblock %}</title>
+        <!-- fonts: Barlow (body) + Barlow Semi Condensed (display) -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@600;700&display=swap"
+            rel="stylesheet"
+        />
+        <!-- bootstrap -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+            crossorigin="anonymous"
+        />
+        <style>
+            :root {
+                --ms-bg: #29313f;
+                --ms-surface: #303b4c;
+                --ms-surface-2: #3a465a;
+                --ms-hairline: #414d63;
+                --ms-ink: #e6ebf2;
+                --ms-ink-dim: #a3aebd;
+                --ms-brass: #d9a441;
+                --ms-brass-bright: #e7bb63;
+                --ms-on-brass: #2b2314;
+            }
+
+            html {
+                color-scheme: dark;
+            }
+
+            html[data-bs-theme="dark"] {
+                --bs-body-bg: var(--ms-bg);
+                --bs-body-color: var(--ms-ink);
+                --bs-secondary-color: var(--ms-ink-dim);
+                --bs-tertiary-bg: var(--ms-surface);
+                --bs-border-color: var(--ms-hairline);
+                --bs-link-color: var(--ms-brass-bright);
+                --bs-link-color-rgb: 231, 187, 99;
+                --bs-link-hover-color: #f1cf8d;
+                --bs-emphasis-color: var(--ms-ink);
+            }
+
+            body {
+                font-family: "Barlow", system-ui, sans-serif;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            main {
+                flex: 1 0 auto;
+            }
+
+            ::selection {
+                background: var(--ms-brass);
+                color: var(--ms-on-brass);
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            .h1,
+            .h2,
+            .h3,
+            .h4,
+            .h5,
+            .h6 {
+                font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+                font-weight: 600;
+            }
+
+            h1 {
+                text-wrap: balance;
+            }
+
+            :focus-visible {
+                outline: 2px solid var(--ms-brass-bright);
+                outline-offset: 2px;
+            }
+
+            /* navbar */
+            .ms-navbar {
+                background: var(--ms-surface);
+                border-bottom: 1px solid var(--ms-hairline);
+            }
+
+            .ms-brand {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.55rem;
+            }
+
+            .ms-wordmark {
+                font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+                font-weight: 600;
+                font-size: 1.3rem;
+                letter-spacing: 0.01em;
+                color: var(--ms-ink);
+                transition: color 0.15s ease;
+            }
+
+            .ms-brand:hover .ms-wordmark,
+            .ms-brand:focus-visible .ms-wordmark {
+                color: var(--ms-brass-bright);
+            }
+
+            /* brass inventory tag — the mark of the system */
+            .ms-tag {
+                width: 1.2rem;
+                height: 0.95rem;
+                background: var(--ms-brass);
+                clip-path: polygon(0 0, 58% 0, 100% 50%, 58% 100%, 0 100%);
+                display: inline-block;
+                position: relative;
+                transform: rotate(-8deg);
+                transform-origin: 20% 50%;
+                animation: ms-tag-settle 0.7s cubic-bezier(0.2, 0.7, 0.3, 1.35) both;
+            }
+
+            .ms-tag::before {
+                content: "";
+                position: absolute;
+                left: 24%;
+                top: 50%;
+                width: 3px;
+                height: 3px;
+                border-radius: 50%;
+                background: var(--ms-surface);
+                transform: translateY(-50%);
+            }
+
+            @keyframes ms-tag-settle {
+                from {
+                    transform: rotate(-30deg);
+                }
+                to {
+                    transform: rotate(-8deg);
+                }
+            }
+
+            /* nav links */
+            .ms-nav-link {
+                color: var(--ms-ink-dim);
+                position: relative;
+                padding: 0.35rem 0.15rem;
+                transition: color 0.15s ease;
+            }
+
+            .ms-nav-link::after {
+                content: "";
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -2px;
+                height: 2px;
+                background: var(--ms-brass);
+                transform: scaleX(0);
+                transform-origin: left;
+                transition: transform 0.18s ease;
+            }
+
+            .ms-nav-link:hover,
+            .ms-nav-link:focus-visible {
+                color: var(--ms-ink);
+            }
+
+            .ms-nav-link:hover::after,
+            .ms-nav-link:focus-visible::after,
+            .ms-nav-link[aria-current="page"]::after {
+                transform: scaleX(1);
+            }
+
+            .ms-nav-link[aria-current="page"] {
+                color: var(--ms-ink);
+            }
+
+            /* buttons */
+            .btn-brass {
+                --bs-btn-color: var(--ms-on-brass);
+                --bs-btn-bg: var(--ms-brass);
+                --bs-btn-border-color: var(--ms-brass);
+                --bs-btn-hover-color: var(--ms-on-brass);
+                --bs-btn-hover-bg: var(--ms-brass-bright);
+                --bs-btn-hover-border-color: var(--ms-brass-bright);
+                --bs-btn-active-color: var(--ms-on-brass);
+                --bs-btn-active-bg: #c89536;
+                --bs-btn-active-border-color: #c89536;
+                --bs-btn-focus-shadow-rgb: 217, 164, 65;
+                font-weight: 600;
+            }
+
+            .ms-btn-quiet {
+                --bs-btn-color: var(--ms-ink-dim);
+                --bs-btn-border-color: var(--ms-hairline);
+                --bs-btn-hover-color: var(--ms-ink);
+                --bs-btn-hover-bg: var(--ms-surface-2);
+                --bs-btn-hover-border-color: var(--ms-hairline);
+                --bs-btn-active-color: var(--ms-ink);
+                --bs-btn-active-bg: var(--ms-surface-2);
+                --bs-btn-active-border-color: var(--ms-hairline);
+                --bs-btn-focus-shadow-rgb: 163, 174, 189;
+                font-weight: 500;
+            }
+
+            .ms-lead {
+                color: var(--ms-ink-dim);
+            }
+
+            /* flash messages */
+            .ms-flash {
+                --bs-alert-bg: var(--ms-surface);
+                --bs-alert-border-color: var(--ms-hairline);
+                --bs-alert-color: var(--ms-ink);
+                border: 1px solid var(--ms-hairline);
+                border-left-width: 3px;
+                border-radius: 0.5rem;
+            }
+
+            .ms-flash .btn-close {
+                filter: none;
+                --bs-btn-close-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23a3aebd'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+            }
+
+            .ms-flash-success {
+                border-left-color: var(--ms-brass);
+            }
+
+            .ms-flash-danger {
+                --bs-alert-color: #f0c2c2;
+                border-left-color: #e26868;
+            }
+
+            .ms-flash-warning {
+                --bs-alert-color: var(--ms-ink);
+                border-left-color: var(--ms-brass-bright);
+            }
+
+            .ms-flash-info {
+                --bs-alert-color: var(--ms-ink);
+                border-left-color: var(--ms-ink-dim);
+            }
+
+            @media (max-width: 767.98px) {
+                .ms-nav-link {
+                    padding: 0.6rem 0.1rem;
+                }
+
+                .ms-nav-cta {
+                    padding: 0.6rem 0 0.75rem;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .ms-tag {
+                    animation: none;
+                }
+
+                .ms-nav-link,
+                .ms-nav-link::after,
+                .ms-wordmark {
+                    transition: none;
+                }
+
+                .ms-flash.fade {
+                    transition: none;
+                }
+            }
+        </style>
+        {% block extra_head %}{% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md sticky-top ms-navbar">
+            <div class="container-xl">
+                <a class="navbar-brand ms-brand" href="/">
+                    <span class="ms-tag" aria-hidden="true"></span>
+                    <span class="ms-wordmark">Masiri</span>
+                </a>
+                <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#ms-nav"
+                    aria-controls="ms-nav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="ms-nav">
+                    <ul class="navbar-nav ms-auto align-items-md-center gap-2 gap-md-3">
+                        <li class="nav-item ms-nav-cta">
+                            <a class="btn btn-brass" href="/dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link ms-nav-link"
+                                href="/add_items"
+                                {% if request.path.startswith('/add_items') %}aria-current="page"{% endif %}
+                            >
+                                Add items
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link ms-nav-link"
+                                href="/orders"
+                                {% if request.path.startswith('/orders') %}aria-current="page"{% endif %}
+                            >
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a
+                                class="nav-link ms-nav-link"
+                                href="/history"
+                                {% if request.path.startswith('/history') %}aria-current="page"{% endif %}
+                            >
+                                History
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="container-xl py-4 px-3 px-md-4">
+            {% with messages = get_flashed_messages(with_categories=true) %} {% if
+            messages %} {% for category, message in messages %}
+            <div class="text-center">
+                <div
+                    class="alert alert-{{ category }} ms-flash ms-flash-{{ category }} alert-dismissible fade show d-inline-block text-start"
+                    role="alert"
+                >
+                    {{ message }}
+                    <button
+                        type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"
+                    ></button>
+                </div>
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+        <!-- Jquery -->
+        <script src="https://code.jquery.com/jquery-4.0.0.js" integrity="sha256-9fsHeVnKBvqh3FB2HYu7g2xseAZ5MlN6Kz/qnkASV8U=" crossorigin="anonymous"></script>
+        <!-- bootstrap script -->
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+            crossorigin="anonymous"
+        ></script>
+        <!-- auto-dismiss flash messages after 5 seconds -->
+        <script>
+            document.querySelectorAll(".ms-flash").forEach(function (el) {
+                setTimeout(function () {
+                    bootstrap.Alert.getOrCreateInstance(el).close();
+                }, 5000);
+            });
+        </script>
+    </body>
+</html>

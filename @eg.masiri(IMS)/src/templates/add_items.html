@@ -1,0 +1,271 @@
+{% extends "base.html" %} {% block title %}Add item{% endblock %} {% block
+extra_head %}
+<style>
+    .add-item-panel {
+        background: var(--ms-surface);
+        border: 1px solid var(--ms-hairline);
+        border-radius: 0.75rem;
+        padding: 1.75rem 1.5rem;
+        max-width: 40rem;
+        margin-left: auto;
+        margin-right: auto;
+        transition: border-color 0.18s ease;
+    }
+
+    .add-item-panel:focus-within {
+        border-color: color-mix(
+            in srgb,
+            var(--ms-brass) 45%,
+            var(--ms-hairline)
+        );
+    }
+
+    .add-item-panel label {
+        display: block;
+        color: var(--ms-ink-dim);
+        font-weight: 500;
+        font-size: 0.925rem;
+        margin-bottom: 0.35rem;
+    }
+
+    .add-item-panel .form-control {
+        background-color: var(--ms-surface-2);
+        border-color: var(--ms-hairline);
+        color: var(--ms-ink);
+    }
+
+    .add-item-panel .form-control::placeholder {
+        color: color-mix(in srgb, var(--ms-ink-dim) 70%, transparent);
+    }
+
+    .add-item-panel .form-control:focus {
+        background-color: var(--ms-surface-2);
+        border-color: var(--ms-brass);
+        color: var(--ms-ink);
+        box-shadow: 0 0 0 0.2rem
+            color-mix(in srgb, var(--ms-brass) 18%, transparent);
+    }
+
+    .add-item-panel .input-group-text {
+        background-color: var(--ms-surface);
+        border-color: var(--ms-hairline);
+        color: var(--ms-ink-dim);
+    }
+
+    .add-item-panel .input-group:focus-within .input-group-text {
+        border-color: var(--ms-brass);
+    }
+
+    .add-item-panel .form-select {
+        background-color: var(--ms-surface-2);
+        border-color: var(--ms-hairline);
+        color: var(--ms-ink);
+    }
+
+    .add-item-panel .form-select:focus {
+        background-color: var(--ms-surface-2);
+        border-color: var(--ms-brass);
+        color: var(--ms-ink);
+        box-shadow: 0 0 0 0.2rem
+            color-mix(in srgb, var(--ms-brass) 18%, transparent);
+    }
+
+    .add-item-panel .table {
+        --bs-table-bg: transparent;
+        --bs-table-color: var(--ms-ink);
+        --bs-table-border-color: var(--ms-hairline);
+    }
+
+    .add-item-panel .table thead th {
+        color: var(--ms-ink-dim);
+        font-weight: 500;
+        border-bottom-color: var(--ms-hairline);
+    }
+
+    .add-item-panel .table td {
+        border-bottom-color: var(--ms-hairline);
+    }
+
+    .add-item-panel .table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .ms-unassign {
+        --bs-btn-color: var(--ms-ink-dim);
+        --bs-btn-hover-color: #e26868;
+        --bs-btn-hover-bg: transparent;
+        --bs-btn-hover-border-color: #e26868;
+        --bs-btn-focus-shadow-rgb: 226, 104, 104;
+        line-height: 1;
+        padding: 0.15rem 0.5rem;
+    }
+
+    @media (max-width: 575.98px) {
+        .add-item-panel {
+            padding: 1.25rem 1rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .add-item-panel {
+            transition: none;
+        }
+    }
+</style>
+{% endblock %} {% block content %}
+
+<div class="mb-4 text-center">
+    <h1 class="mb-1">Add item</h1>
+    <p class="ms-lead mb-0">Record a new product in the inventory.</p>
+</div>
+
+<div class="add-item-panel">
+    <form action="/api/add_items" method="post">
+        <div class="row g-4">
+            <div class="col-12">
+                <label for="product_name_input">Product name</label>
+                <input
+                    id="product_name_input"
+                    name="product_name"
+                    type="text"
+                    class="form-control"
+                />
+            </div>
+            <div class="col-md-6">
+                <label for="product_code_input">Product code</label>
+                <input
+                    id="product_code_input"
+                    name="product_code"
+                    type="number"
+                    class="form-control"
+                />
+            </div>
+            <div class="col-md-6">
+                <label for="product_counter_input">Counter</label>
+                <input
+                    id="product_counter_input"
+                    name="product_counter"
+                    type="number"
+                    class="form-control"
+                />
+            </div>
+            <div class="col-md-6">
+                <label for="product_color_input">Product color</label>
+                <input
+                    id="product_color_input"
+                    name="product_color"
+                    type="text"
+                    class="form-control"
+                />
+            </div>
+            <div class="col-md-6">
+                <label for="product_size_input">Size</label>
+                <select
+                    id="product_size_input"
+                    name="product_size"
+                    class="form-select"
+                >
+                    <option value="s">s</option>
+                    <option value="m" selected>m</option>
+                    <option value="l">l</option>
+                    <option value="xl">xl</option>
+                    <option value="xxl">xxl</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="product_price">Price</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input
+                        id="product_price"
+                        name="product_price"
+                        type="number"
+                        class="form-control"
+                        placeholder="0.00"
+                    />
+                </div>
+            </div>
+            <div class="col-12 d-flex flex-wrap justify-content-end gap-2">
+                <button
+                    type="submit"
+                    form="reset_form"
+                    class="btn ms-btn-quiet px-4"
+                >
+                    Reset inventory
+                </button>
+                <button type="submit" class="btn btn-brass px-4">
+                    Add items
+                </button>
+            </div>
+        </div>
+    </form>
+    <form id="reset_form" method="post" action="/api/add_items/reset"></form>
+</div>
+
+<div class="add-item-panel mt-4">
+    <h2 class="h5 mb-1">Assigned codes</h2>
+    <p class="ms-lead">
+        Every product code currently used in the inventory.
+    </p>
+    {% if assignments %}
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead>
+                <tr>
+                    <th scope="col">Code</th>
+                    <th scope="col">Product name</th>
+                    <th scope="col">Product color</th>
+                    <th scope="col">Product size</th>
+                    <th scope="col"><span class="visually-hidden">Unassign</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for code, name, color, size in assignments %}
+                <tr>
+                    <td>{{ code }}</td>
+                    <td>{{ name }}</td>
+                    <td>{{ color }}</td>
+                    <td>{{ size }}</td>
+                    <td class="text-end">
+                        <form
+                            method="post"
+                            action="/api/add_items/remove_all"
+                            class="d-inline"
+                        >
+                            <input type="hidden" name="product_code" value="{{ code }}" />
+                            <button
+                                type="submit"
+                                class="btn ms-btn-quiet ms-unassign"
+                                aria-label="Unassign code {{ code }}"
+                            >
+                                ✕
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="ms-lead mb-0">No codes assigned yet. Add an item to see it here.</p>
+    {% endif %}
+</div>
+<script>
+    // unassign guard: announce what the X removes before submitting
+    document.querySelectorAll("form[action='/api/add_items/remove_all']").forEach(function (form) {
+        form.addEventListener("submit", function (event) {
+            if (!confirm("All items with this code will be removed.")) {
+                event.preventDefault();
+            }
+        });
+    });
+
+    // reset guard: wiping the whole inventory needs a clear heads-up
+    document.getElementById("reset_form").addEventListener("submit", function (event) {
+        if (!confirm("This will remove every item in the inventory.")) {
+            event.preventDefault();
+        }
+    });
+</script>
+{% endblock %}

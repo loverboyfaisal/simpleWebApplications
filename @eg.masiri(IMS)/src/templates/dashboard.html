@@ -1,0 +1,304 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block
+extra_head %}
+<style>
+    .dash-panel {
+        background: var(--ms-surface);
+        border: 1px solid var(--ms-hairline);
+        border-radius: 0.75rem;
+        padding: 1.75rem 1.5rem;
+        height: 100%;
+    }
+
+    .ms-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        align-items: baseline;
+    }
+
+    .ms-summary-n {
+        font-family: "Barlow Semi Condensed", "Barlow", sans-serif;
+        font-weight: 600;
+        font-size: 2rem;
+        line-height: 1;
+        color: var(--ms-brass);
+    }
+
+    .ms-summary-l {
+        display: block;
+        color: var(--ms-ink-dim);
+        font-size: 0.925rem;
+        font-weight: 500;
+    }
+
+    .ms-summary-item + .ms-summary-item {
+        padding-left: 1.25rem;
+        border-left: 1px solid var(--ms-hairline);
+    }
+
+    .ms-summary-ref .ms-summary-n,
+    .ms-summary-sold .ms-summary-n,
+    .ms-summary-total .ms-summary-n {
+        color: var(--ms-ink);
+    }
+
+    .ms-summary-sales .ms-summary-n {
+        color: var(--ms-brass);
+    }
+
+    .dash-panel .table {
+        --bs-table-bg: transparent;
+        --bs-table-color: var(--ms-ink);
+        --bs-table-border-color: var(--ms-hairline);
+    }
+
+    .dash-panel .table thead th {
+        color: var(--ms-ink-dim);
+        font-weight: 500;
+        border-bottom-color: var(--ms-hairline);
+    }
+
+    .dash-panel .table td {
+        border-bottom-color: var(--ms-hairline);
+    }
+
+    .dash-panel .table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .ms-total-row td {
+        color: var(--ms-brass);
+        font-weight: 600;
+        border-top-color: var(--ms-hairline);
+    }
+
+    @media (max-width: 575.98px) {
+        .dash-panel {
+            padding: 1.25rem 1rem;
+        }
+    }
+</style>
+{% endblock %} {% block content %}
+
+<div class="mb-4">
+    <h1 class="mb-1">Dashboard</h1>
+    <p class="ms-lead mb-0">
+        Current state of the inventory across all products.
+    </p>
+</div>
+
+<div class="row g-4">
+    <div class="col-12">
+        <div class="dash-panel">
+            <h2 class="h5 mb-3">Item status</h2>
+            <div class="ms-summary">
+                <div class="ms-summary-item ms-summary-ava">
+                    <span class="ms-summary-n">{{ summary.ava }}</span>
+                    <span class="ms-summary-l">available</span>
+                </div>
+                <div class="ms-summary-item ms-summary-sold">
+                    <span class="ms-summary-n">{{ summary.sold }}</span>
+                    <span class="ms-summary-l">sold</span>
+                </div>
+                <div class="ms-summary-item ms-summary-ref">
+                    <span class="ms-summary-n">{{ summary.ref }}</span>
+                    <span class="ms-summary-l">refunded</span>
+                </div>
+                <div class="ms-summary-item ms-summary-total">
+                    <span class="ms-summary-n">{{ summary.ava + summary.sold + summary.ref }}</span>
+                    <span class="ms-summary-l">total</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="dash-panel">
+            <h2 class="h5 mb-3">Available variants</h2>
+            {% if variants %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Size</th>
+                            <th scope="col" class="text-end">Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, color, size, count in variants %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ color }}</td>
+                            <td>{{ size }}</td>
+                            <td class="text-end">{{ count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">No available items in the inventory.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="dash-panel">
+            <h2 class="h5 mb-3">Refunded items</h2>
+            {% if refunded_items %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Size</th>
+                            <th scope="col" class="text-end">Price</th>
+                            <th scope="col">Refunded at</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for code, name, color, size, price, refunded_at in refunded_items %}
+                        <tr>
+                            <td>{{ code }}</td>
+                            <td>{{ name }}</td>
+                            <td>{{ color }}</td>
+                            <td>{{ size }}</td>
+                            <td class="text-end">${{ price }}</td>
+                            <td>{{ refunded_at.strftime("%Y-%m-%d %H:%M") }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">Nothing refunded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="dash-panel">
+            <h2 class="h5 mb-3">Sold variants</h2>
+            {% if sold_variants %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Size</th>
+                            <th scope="col" class="text-end">Count</th>
+                            <th scope="col" class="text-end">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, color, size, count, total in sold_variants %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ color }}</td>
+                            <td>{{ size }}</td>
+                            <td class="text-end">{{ count }}</td>
+                            <td class="text-end">${{ total }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="ms-total-row">
+                            <td colspan="4">Total sold</td>
+                            <td class="text-end">${{ sold_total }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">Nothing sold yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="dash-panel">
+            <h2 class="h5 mb-3">Refunded variants</h2>
+            {% if refunded_variants %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Product</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Size</th>
+                            <th scope="col" class="text-end">Count</th>
+                            <th scope="col" class="text-end">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for name, color, size, count, total in refunded_variants %}
+                        <tr>
+                            <td>{{ name }}</td>
+                            <td>{{ color }}</td>
+                            <td>{{ size }}</td>
+                            <td class="text-end">{{ count }}</td>
+                            <td class="text-end">${{ total }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="ms-total-row">
+                            <td colspan="4">Total refunded</td>
+                            <td class="text-end">${{ refunded_total }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">Nothing refunded yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="dash-panel">
+            <h2 class="h5 mb-3">Sales</h2>
+            {% if sales %}
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th scope="col">Date</th>
+                            <th scope="col">Code</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Color</th>
+                            <th scope="col">Size</th>
+                            <th scope="col" class="text-end">Price</th>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sale_id, code, name, color, size, price, customer, payment, sale_date in sales %}
+                        <tr>
+                            <td>{{ sale_date.strftime("%Y-%m-%d %H:%M") }}</td>
+                            <td>{{ code }}</td>
+                            <td>{{ name }}</td>
+                            <td>{{ color }}</td>
+                            <td>{{ size }}</td>
+                            <td class="text-end">${{ price }}</td>
+                            <td>{{ customer or '—' }}</td>
+                            <td>
+                                <form method="post" action="/api/sales/delete" style="display:inline">
+                                    <input type="hidden" name="sale_id" value="{{ sale_id }}">
+                                    <button type="submit" class="btn btn-sm ms-btn-quiet px-2 py-0" title="Remove sale and restore item">✕</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr class="ms-total-row">
+                            <td colspan="5">Total sales</td>
+                            <td class="text-end">${{ "%.2f"|format(sales_total or 0) }}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="ms-lead mb-0">No sales recorded yet.</p>
+            {% endif %}
+        </div>
+</div>
+{% endblock %}
